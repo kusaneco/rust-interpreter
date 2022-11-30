@@ -1,0 +1,12 @@
+debug/
+target/
+Cargo.lock
+
+// rustfmt
+**/*.rs.bk/target
+
+// dhat-heap
+dhat-heap.json
+
+// Mac
+.DS_Store
