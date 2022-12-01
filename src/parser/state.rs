@@ -4,6 +4,10 @@ use crate::Expr;
 use crate::Token;
 
 impl Parser {
+    ///
+    /// Statement = IfStatement | AssignStatement | CompoundStatement
+    /// CompoundStatement = Statement { ';' Statement }
+    ///
     pub(crate) fn state(&mut self) -> Statement {
         let result = match self.current() {
             Some(Token::PRINT) => self.print(), // TODO 関数を作ったら消す
@@ -61,7 +65,7 @@ impl Parser {
             _ => Statement::Null,
         }
     }
-
+   
     fn compound(&mut self, st: Statement) -> Statement {
         self.confirm(Token::SEMICOLON);
         Statement::CompoundStatement {

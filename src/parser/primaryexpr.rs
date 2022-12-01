@@ -3,6 +3,9 @@ use crate::Expr;
 use crate::Token;
 
 impl Parser {
+    ///
+    /// PrimaryExpr = '(' AddExpr ')' | NUMBER | ID
+    ///
     pub(crate) fn primary(&mut self) -> Expr {
         return match self.current() {
             Some(Token::LPAR) => self.par(),
