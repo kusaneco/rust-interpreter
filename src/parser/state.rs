@@ -1,6 +1,6 @@
 use crate::parser::Parser;
-use crate::Statement;
 use crate::Expr;
+use crate::Statement;
 use crate::Token;
 
 impl Parser {
@@ -24,8 +24,8 @@ impl Parser {
     }
 
     pub(crate) fn expr(&mut self) -> Expr {
-          return self.add();
-     }
+        return self.add();
+    }
 
     fn print(&mut self) -> Statement {
         self.confirm(Token::PRINT);
@@ -65,7 +65,7 @@ impl Parser {
             _ => Statement::Null,
         }
     }
-   
+
     fn compound(&mut self, st: Statement) -> Statement {
         self.confirm(Token::SEMICOLON);
         Statement::CompoundStatement {
@@ -74,4 +74,3 @@ impl Parser {
         }
     }
 }
-
