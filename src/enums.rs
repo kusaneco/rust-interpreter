@@ -41,6 +41,9 @@ pub enum Expr {
 
 #[derive(Debug, PartialEq, Clone)]
 pub enum Statement {
+    ExprStatement { 
+        expr: Expr 
+    },
     CompoundStatement {
         st1: Box<Statement>,
         st2: Box<Statement>,

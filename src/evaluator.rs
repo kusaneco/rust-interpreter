@@ -15,6 +15,9 @@ pub fn eval(syntax: Syntax, env: &mut Env) -> () {
 // 文を実行する
 fn exec(statement: Statement, env: &mut Env) -> () {
     match statement {
+        Statement::ExprStatement { expr } => {
+            println!("{:?\n}", calc(expr, env));  // TODO 出力の仕方を現状に合わせてるだけなので自然な形にする
+        }
         Statement::CompoundStatement { st1, st2 } => {
             exec(*st1, env);
             exec(*st2, env);

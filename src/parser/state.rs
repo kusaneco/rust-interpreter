@@ -13,7 +13,7 @@ impl Parser {
             Some(Token::PRINT) => self.print(), // TODO 関数を作ったら消す
             Some(Token::IF) => self.sif(),
             Some(Token::IDENT(s)) => self.sident(s),
-            _ => Statement::Null,
+            _ => Statement::ExprStatement { expr: self.expr() },
         };
 
         // 文の後に ';' が続くようであれば次の文を扱う
