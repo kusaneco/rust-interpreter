@@ -3,6 +3,7 @@ mod parser;
 mod scanner;
 
 mod enums;
+use std::io::{self, Write};
 use crate::enums::BinOp;
 use crate::enums::Env;
 use crate::enums::Expr;
@@ -27,10 +28,18 @@ fn main() {
     #[global_allocator]
     static ALLOC: dhat::Alloc = dhat::Alloc;
 
-    let args: Vec<String> = std::env::args().collect();
-    match args.get(1) {
-        Some(str) => print_eval_result(str),
-        _ => print!("usage: cargo run \"x = 1 + 2 + 3\"\n"),
+    loop {
+        print!("> ");
+        io::stdout().flush().unwrap();
+
+        let mut input = String::new();
+        io::stdin().read_line(&mut input).ok();
+
+        if input.trim() == "exit" {
+            break;
+        }
+
+        print_eval_result(&input.trim());
     }
 
     #[cfg(feature = "dhat-heap")]
