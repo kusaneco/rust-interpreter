@@ -26,6 +26,12 @@ fn exec(statement: Statement, env: &mut Env) -> () {
         Statement::Print { expr } => {
             print!("{:?}\n", calc(expr, env));
         }
+        Statement::Func { name, args, body } => {
+            // TODO 関数のデータをenvに追加する
+        }
+        Statement::Return { expr } => {
+            calc(expr, env);
+        }
         Statement::Assign { id, e } => {
             let value = calc(*e, env);
             env.insert(id, value);
@@ -41,7 +47,7 @@ fn exec(statement: Statement, env: &mut Env) -> () {
                 exec(*els, env)
             }
         }
-        _ => panic!("実行できない Statement を実行しようとした"),
+        _ => panic!("実行できない Statement {:?} を実行しようとした", statement),
     }
 }
 

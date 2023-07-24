@@ -19,6 +19,9 @@ impl Scanner {
                 ' ' => {
                     self.pos += 1;
                 }
+                ',' => {
+                    self.pos += 1;
+                }
                 '+' => {
                     self.pos += 1;
                     return Some(Token::PLUS);
@@ -96,7 +99,8 @@ impl Scanner {
                     return match &*_word {
                         "if" => Some(Token::IF),
                         "else" => Some(Token::ELSE),
-                        "print" => Some(Token::PRINT), // TODO 関数作ったら消す
+                        "fn" => Some(Token::FUNC), 
+                        "return" => Some(Token::RETURN), 
                         _ => Some(Token::IDENT(_word)),
                     };
                 }

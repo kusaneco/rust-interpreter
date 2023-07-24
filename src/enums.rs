@@ -17,7 +17,8 @@ pub enum Token {
     ELSE,
     IDENT(String),
     SEMICOLON,
-    PRINT, // TODO 関数作ったら関数にする
+    FUNC, 
+    RETURN,
 }
 
 #[derive(Debug, PartialEq, Clone)]
@@ -50,6 +51,14 @@ pub enum Statement {
     },
     Print {
         // TODO 関数作ったら関数にする
+        expr: Expr,
+    },
+    Func {
+        name: String,
+        args: Vec<String>,
+        body: Box<Statement>,
+    },
+    Return {
         expr: Expr,
     },
     Assign {

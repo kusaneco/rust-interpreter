@@ -14,7 +14,7 @@ impl Parser {
             Some(Token::IDENT(str)) => self.ident(str),
             Some(Token::MINUS) => self.negative(),
             _ => {
-                panic!("PrimaryExpr を判定する際に想定外のトークンがきた");
+                panic!("PrimaryExpr を判定する際に想定外のトークン {:?} がきた", self.current());
             }
         };
     }

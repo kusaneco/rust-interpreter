@@ -40,7 +40,7 @@ impl Parser {
     fn confirm(&mut self, expect: Token) {
         match self.current() {
             Some(token) if token == expect => self.fix(),
-            _ => panic!("想定外のトークンがきた"),
+            _ => panic!("{:?} を想定しているところに想定外のトークン {:?} がきた", expect, self.current()),
         };
     }
 }

@@ -10,9 +10,10 @@ impl Parser {
     ///
     pub(crate) fn state(&mut self) -> Statement {
         let result = match self.current() {
-            Some(Token::PRINT) => self.print(), // TODO 関数を作ったら消す
+            Some(Token::FUNC) => self.sfunc(), 
+            Some(Token::RETURN) => self.sreturn(), 
             Some(Token::IF) => self.sif(),
-            Some(Token::IDENT(s)) => self.sident(s),
+            Some(Token::IDENT(s)) => self.sident(s),  // TODO x + 2 のように x が先に来たときに ExprStatement として処理されないのを直す
             _ => Statement::ExprStatement { expr: self.expr() },
         };
 
@@ -28,8 +29,49 @@ impl Parser {
     }
 
     fn print(&mut self) -> Statement {
-        self.confirm(Token::PRINT);
+        self.confirm(Token::FUNC);
         Statement::Print { expr: self.expr() }
+    }
+
+    fn sfunc(&mut self) -> Statement {
+        self.confirm(Token::FUNC);
+        // name
+        let name = match self.current() {
+            Some(Token::IDENT(s)) => s,
+            _ => panic!("unexpected identifier"),
+        };
+        self.fix();
+
+        self.confirm(Token::LPAR);
+        // args
+        let mut args = vec![];
+        loop {
+            match self.current() {
+                Some(Token::IDENT(s)) => {
+                    args.push(s);
+                    self.fix();
+                }
+                _ => {
+                    break;
+                }
+            }
+        }
+        self.confirm(Token::RPAR);
+
+        self.confirm(Token::LBRACE);
+        // body
+        let body = self.state();
+        self.confirm(Token::RBRACE);
+        Statement::Func {
+            name: name,
+            args: args,
+            body: Box::new(body),
+        }
+    }
+
+    fn sreturn(&mut self) -> Statement {
+        self.confirm(Token::RETURN);
+        Statement::Return { expr: self.expr() }
     }
 
     fn sif(&mut self) -> Statement {
