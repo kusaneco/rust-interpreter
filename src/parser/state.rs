@@ -10,16 +10,20 @@ impl Parser {
     ///
     pub(crate) fn state(&mut self) -> Statement {
         let result = match self.current() {
-            Some(Token::FUNC) => self.sfunc(), 
-            Some(Token::RETURN) => self.sreturn(), 
-            Some(Token::IF) => self.sif(),
-            Some(Token::IDENT(s)) => self.sident(s),  // TODO x + 2 のように x が先に来たときに ExprStatement として処理されないのを直す
-            _ => Statement::ExprStatement { expr: self.expr() },
+            Some(Token::FUNC) => self.func_statement(), 
+            Some(Token::RETURN) => self.return_statement(), 
+            Some(Token::IF) => self.if_statement(),
+            Some(Token::IDENT(s)) => 
+                match self.next() {
+                    Some(Token::EQ) => self.ident_statement(s), 
+                    _ => self.expr_statement()
+                }
+            _ => self.expr_statement(),
         };
 
         // 文の後に ';' が続くようであれば次の文を扱う
         match self.current() {
-            Some(Token::SEMICOLON) => self.compound(result),
+            Some(Token::SEMICOLON) => self.compound_statement(result),
             _ => result,
         }
     }
@@ -33,7 +37,7 @@ impl Parser {
         Statement::Print { expr: self.expr() }
     }
 
-    fn sfunc(&mut self) -> Statement {
+    fn func_statement(&mut self) -> Statement {
         self.confirm(Token::FUNC);
         // name
         let name = match self.current() {
@@ -69,12 +73,12 @@ impl Parser {
         }
     }
 
-    fn sreturn(&mut self) -> Statement {
+    fn return_statement(&mut self) -> Statement {
         self.confirm(Token::RETURN);
         Statement::Return { expr: self.expr() }
     }
 
-    fn sif(&mut self) -> Statement {
+    fn if_statement(&mut self) -> Statement {
         self.confirm(Token::IF);
         let expr1 = self.expr();
 
@@ -94,7 +98,7 @@ impl Parser {
         }
     }
 
-    fn sident(&mut self, s: String) -> Statement {
+    fn ident_statement(&mut self, s: String) -> Statement {
         match self.next() {
             Some(Token::EQ) => {
                 self.fix();
@@ -108,7 +112,11 @@ impl Parser {
         }
     }
 
-    fn compound(&mut self, st: Statement) -> Statement {
+    fn expr_statement(&mut self) -> Statement {
+        Statement::ExprStatement { expr: self.expr() }
+    }
+
+    fn compound_statement(&mut self, st: Statement) -> Statement {
         self.confirm(Token::SEMICOLON);
         Statement::CompoundStatement {
             st1: Box::new(st),
