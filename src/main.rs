@@ -11,14 +11,13 @@ use crate::enums::Statement;
 use crate::enums::Syntax;
 use crate::enums::Token;
 
-fn print_eval_result(str: &str) -> () {
+fn print_eval_result(str: &str, env: &mut Env) -> () {
     print!("-----------------------------------------\n");
-    let mut env = Env::new();
     print!("計算対象：{:?}\n", str);
     print!("スキャン結果：{:?}\n", scanner::scanner(str));
     print!("パース結果：{:?}\n", parser::parser(scanner::scanner(str)));
     print!("結果：");
-    evaluator::eval(parser::parser(scanner::scanner(str)), &mut env);
+    evaluator::eval(parser::parser(scanner::scanner(str)), env);
     print!("環境：{:?}\n", env);
     print!("-----------------------------------------\n");
 }
@@ -27,6 +26,7 @@ fn main() {
     #[cfg(feature = "dhat-heap")]
     #[global_allocator]
     static ALLOC: dhat::Alloc = dhat::Alloc;
+    let mut env = Env::new();
 
     loop {
         print!("> ");
@@ -39,7 +39,7 @@ fn main() {
             break;
         }
 
-        print_eval_result(&input.trim());
+        print_eval_result(&input.trim(), &mut env);
     }
 
     #[cfg(feature = "dhat-heap")]
