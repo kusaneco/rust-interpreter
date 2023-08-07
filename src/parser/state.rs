@@ -10,7 +10,7 @@ impl Parser {
     ///
     pub(crate) fn state(&mut self) -> Statement {
         let result = match self.current() {
-            Some(Token::FUNC) => self.func_statement(), 
+            Some(Token::FN) => self.function_define_statement(), 
             Some(Token::RETURN) => self.return_statement(), 
             Some(Token::IF) => self.if_statement(),
             Some(Token::IDENT(s)) => 
@@ -33,12 +33,12 @@ impl Parser {
     }
 
     fn print(&mut self) -> Statement {
-        self.confirm(Token::FUNC);
+        self.confirm(Token::FN);
         Statement::Print { expr: self.expr() }
     }
 
-    fn func_statement(&mut self) -> Statement {
-        self.confirm(Token::FUNC);
+    fn function_define_statement(&mut self) -> Statement {
+        self.confirm(Token::FN);
         // name
         let name = match self.current() {
             Some(Token::IDENT(s)) => s,
@@ -47,12 +47,15 @@ impl Parser {
         self.fix();
 
         self.confirm(Token::LPAR);
-        // args
-        let mut args = vec![];
+        // params
+        let mut params = vec![];
         loop {
             match self.current() {
                 Some(Token::IDENT(s)) => {
-                    args.push(s);
+                    params.push(s);
+                    self.fix();
+                }
+                Some(Token::COMMA) => {
                     self.fix();
                 }
                 _ => {
@@ -66,16 +69,16 @@ impl Parser {
         // body
         let body = self.state();
         self.confirm(Token::RBRACE);
-        Statement::Func {
-            name: name,
-            args: args,
+        Statement::FunctionDefine {
+            id: name,
+            params: params,
             body: Box::new(body),
         }
     }
 
     fn return_statement(&mut self) -> Statement {
         self.confirm(Token::RETURN);
-        Statement::Return { expr: self.expr() }
+        Statement::Return { expr: Box::new(self.expr()) }
     }
 
     fn if_statement(&mut self) -> Statement {

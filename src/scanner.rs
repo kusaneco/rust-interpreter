@@ -21,6 +21,7 @@ impl Scanner {
                 }
                 ',' => {
                     self.pos += 1;
+                    return Some(Token::COMMA);
                 }
                 '+' => {
                     self.pos += 1;
@@ -99,7 +100,7 @@ impl Scanner {
                     return match &*_word {
                         "if" => Some(Token::IF),
                         "else" => Some(Token::ELSE),
-                        "fn" => Some(Token::FUNC), 
+                        "fn" => Some(Token::FN), 
                         "return" => Some(Token::RETURN), 
                         _ => Some(Token::IDENT(_word)),
                     };

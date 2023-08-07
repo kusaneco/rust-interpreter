@@ -1,5 +1,6 @@
 use std::collections::HashMap;
 pub type Env = HashMap<String, i32>;
+pub type FunctionTable = HashMap<String, Declaration>;
 
 #[derive(Debug, PartialEq, Clone)]
 pub enum Token {
@@ -11,14 +12,23 @@ pub enum Token {
     RPAR,
     LBRACE,
     RBRACE,
+    COMMA,
     EQ,
     NUMBER(i32),
     IF,
     ELSE,
     IDENT(String),
     SEMICOLON,
-    FUNC, 
+    FN, 
     RETURN,
+}
+
+#[derive(Debug, PartialEq, Clone)]
+pub enum Declaration {
+    Function {
+        params: Vec<String>,
+        body: Box<Statement>,
+    },
 }
 
 #[derive(Debug, PartialEq, Clone)]
@@ -38,6 +48,10 @@ pub enum Expr {
     },
     Number(i32),
     Var(String),
+    FunctionCall {
+        id: String,
+        args: Vec<Expr>,
+    },
 }
 
 #[derive(Debug, PartialEq, Clone)]
@@ -53,13 +67,16 @@ pub enum Statement {
         // TODO 関数作ったら関数にする
         expr: Expr,
     },
-    Func {
-        name: String,
-        args: Vec<String>,
+    FunctionDefine {
+        id: String,
+        params: Vec<String>,
         body: Box<Statement>,
     },
-    Return {
+    FunctionCall {
         expr: Expr,
+    },
+    Return {
+        expr: Box<Expr>,
     },
     Assign {
         id: String,

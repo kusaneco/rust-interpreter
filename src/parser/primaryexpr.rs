@@ -40,7 +40,25 @@ impl Parser {
 
     fn ident(&mut self, str: String) -> Expr {
         self.fix();
-        Expr::Var(str)
+        match self.current() {
+            Some(Token::LPAR) => {
+                self.confirm(Token::LPAR);
+                let mut args = vec![];
+
+                args.push(self.expr());
+                while let Some(Token::COMMA) = self.current() {
+                    self.confirm(Token::COMMA);
+                    args.push(self.expr());
+                }
+
+                self.confirm(Token::RPAR);
+                Expr::FunctionCall {
+                    id: str,
+                    args: args,
+                }
+            }
+            _ => Expr::Var(str),
+        }
     }
 
     // TODO 負の数考え中
